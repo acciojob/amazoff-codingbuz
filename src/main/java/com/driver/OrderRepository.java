@@ -78,4 +78,8 @@ public class OrderRepository {
     public String getPartnerForOrder(String orderId) {
         return  partnerPair.get(orderId);
     }
+
+    public List<String> getAllOrderForpartner(String partnerId) {
+        return partnerOrderPair.getOrDefault(partnerId,new ArrayList<>());
+    }
 }
