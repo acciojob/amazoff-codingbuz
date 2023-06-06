@@ -79,7 +79,7 @@ public class OrderRepository {
         return  partnerPair.get(orderId);
     }
 
-    public List<String> getAllOrderForpartner(String partnerId) {
+    public List<String> getAllOrderForPartner(String partnerId) {
         return partnerOrderPair.getOrDefault(partnerId,new ArrayList<>());
     }
 }
