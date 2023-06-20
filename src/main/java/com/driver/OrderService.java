@@ -66,7 +66,7 @@ public class OrderService {
 
     }
 
-    public List<String> getOrderByParnerId(String partnerId) {
+    public List<String> getOrderByPartnerId(String partnerId) {
         return orderRepository.getOrderByPartnerId(partnerId);
     }
 
