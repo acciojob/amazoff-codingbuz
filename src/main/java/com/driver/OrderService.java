@@ -1,121 +1,53 @@
 package com.driver;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+@Service
 public class OrderService {
 
+    OrderRepository orderRepository = new OrderRepository();
 
-    private OrderRepository orderRepository;
-    public void addOrder(Order order) {
+    public void addOrder(Order order){
         orderRepository.addOrder(order);
     }
-
-    public void addPartner(String partnerId) {
-        DeliveryPartner partner=new DeliveryPartner(partnerId);
-        orderRepository.addPartner(partner);
-        return;
+    public void addDeliveryPartner(String partnerId){
+        DeliveryPartner deliveryPartner = new DeliveryPartner(partnerId);
+        orderRepository.addDeliveryPartner(deliveryPartner);
     }
-
-    public void addOrderPartnerPair(String orderId, String partnerId) {
-
-        Optional<Order> optionalOrder=orderRepository.getOrderById(orderId);
-        Optional<DeliveryPartner> optionalDeliveryPartner=orderRepository.getPartnerById(partnerId);
-
-        if(optionalOrder.isEmpty()){
-           throw new RuntimeException("order id is not present"+orderId);
-        }
-        if(optionalDeliveryPartner.isEmpty()){
-            throw new RuntimeException("order id is not present"+partnerId);
-        }
-        DeliveryPartner partner=optionalDeliveryPartner.get();
-        partner.setNumberOfOrders(partner.getNumberOfOrders()+1);
-        orderRepository.addPartner(partner);
-//        DeliveryPartner partner=new DeliveryPartner(partnerId);
-//        Order order=new Order(orderId);
-          orderRepository.addOrderPartnerPair(orderId,partnerId);
+    public void addOrderPartnerPair(String orderId, String partnerId){
+        orderRepository.addOrderPartnerPair(orderId,partnerId);
     }
-
-    public Order getOrderById(String orderId) {
-     Optional<Order> optionalOrder=orderRepository.getOrderById(orderId);
-     if(optionalOrder.isPresent()){
-         return optionalOrder.get();
-     }
-     throw new RuntimeException("Order not found");
+    public Order getOrderById(String orderId){
+        return orderRepository.getOrderById(orderId);
     }
-
-    public DeliveryPartner getPartnerById(String partnerId) {
-        Optional<DeliveryPartner> optionalOrder=orderRepository.getPartnerById(partnerId);
-        if(optionalOrder.isPresent()){
-            return optionalOrder.get();
-        }
-        throw new RuntimeException("Order not found");
+    public DeliveryPartner getPartnerById(String partnerId){
+        return orderRepository.getPartnerById(partnerId);
     }
-
-    public Integer getOrderCountByPartnerId(String partnerId) {
-//            Optional<DeliveryPartner> optional=orderRepository.getPartnerById(partnerId);
-//            if(optional.isPresent()){
-//                return optional.get().getNumberOfOrders();
-//            }
-//            return 0;
-
-        List<String> order= orderRepository.getOrderForPartner(partnerId);
-        return order.size();
-
+    public Integer getOrderCountByPartnerId(String partnerId){
+        return orderRepository.getOrderCountByPartnerId(partnerId);
     }
-
-    public List<String> getOrderByParnerId(String partnerId) {
-        return orderRepository.getOrderByPartnerId(partnerId);
+    public List<String> getOrdersByPartnerId(String partnerId){
+        return orderRepository.getOrdersByPartnerId(partnerId);
     }
-
-    public List<String> getAllOrder() {
-        return orderRepository.getAllOrder();
+    public List<String> getAllOrders(){
+        return orderRepository.getAllOrders();
     }
-
-    public Integer getCountOfUnassignedOrders() {
-        return orderRepository.getAllOrder().size()- orderRepository.getAssignedOrder().size();
+    public Integer getCountOfUnassignedOrders(){
+        return orderRepository.getCountOfUnassignedOrders();
     }
-
-    public Integer getOrdersLeftAfterGivenTimeByPartnerId(String time, String partnerId) {
-          List<String> orderId=orderRepository.getOrderForPartner(partnerId);
-          List<Order> orders=new ArrayList<>();
-          for(String id:orderId){
-              Order order=orderRepository.getOrderById(id).get();
-              if(order.getDeliveryTime()>TimeUtils.convertTime(time)){
-                  orders.add(order);
-              }
-          }
-          return orders.size();
+    public Integer getOrdersLeftAfterGivenTimeByPartnerId(String time,String partnerId){
+        return orderRepository.getOrdersLeftAfterGivenTimeByPartnerId(time,partnerId);
     }
-
-    public String getLastDeliveryTimeByPartnerId(String partnerId) {
-        List<String> orderId=orderRepository.getAllOrderForPartner(partnerId);
-        int max=0;
-        for(String id:orderId) {
-           int deliveryTime=orderRepository.getOrderById(id).get().getDeliveryTime();
-           if(deliveryTime>max){
-               max=deliveryTime;
-           }
-        }
-        return TimeUtils.convertTime(max);
+    public String getLastDeliveryTimeByPartnerId(String partnerId){
+        return orderRepository.getLastDeliveryTimeByPartnerId(partnerId);
     }
-
-    public void deletePartnerById(String partnerId) {
-        List<String> orderId=orderRepository.getOrderForPartner(partnerId);
-        orderRepository.deletePartner(partnerId);
-        for (String id:orderId){
-            orderRepository.unAssignedOrder(id);
-        }
+    public void deletePartnerById(String partnerId){
+        orderRepository.deletePartnerById(partnerId);
     }
-
-    public void deleteOrderById(String orderId) {
-        String partnerId=orderRepository.getPartnerForOrder(orderId);
-        orderRepository.deleteOrder(orderId);
-        if(Objects.nonNull(partnerId)) {
-            List<String> ordersId = orderRepository.getOrderForPartner(orderId);
-            ordersId.remove(orderId);
-        }
+    public void deleteOrderById(String orderId){
+        orderRepository.deleteOrderById(orderId);
     }
 }
