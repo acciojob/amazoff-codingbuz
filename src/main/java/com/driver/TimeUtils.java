@@ -1,34 +1,15 @@
 package com.driver;
 
-import java.util.Arrays;
-import java.util.List;
-
-public class TimeUtils {
-
-
-    private TimeUtils(){
-
+public class TimeUtil {
+    public static int convertDeliverTime(String deliveryTime) {
+        String[]time=deliveryTime.split(":");
+        return Integer.parseInt(time[0])*60+Integer.parseInt(time[1]);
     }
-    public static int convertTime(String deliveryTime) {
-        List<String> list= Arrays.asList(deliveryTime.split(":"));
-        int HH=Integer.parseInt(list.get(0));
-
-        int MM=Integer.parseInt(list.get(1));
-
-        return HH*60 + MM;
-    }
-
-    public static String convertTime(int deliveryTime){
-        int HH = deliveryTime / 60;
-        int MM = deliveryTime % 60;
-        String n1 = String.valueOf(HH);
-        String n2 = String.valueOf(MM);
-        if(n1.length()==1){
-            n1='0'+n1;
-        }
-        if(n2.length()==1){
-            n2='0'+n2;
-        }
-        return n1 + ":" + n2;
+    public static String convertDeliverTime(int deliveryTime) {
+        int hh=deliveryTime/60;
+        int mm=deliveryTime%60;
+        String HH=String.valueOf(hh);
+        String MM=String.valueOf(mm);
+        return HH+":"+MM;
     }
 }
